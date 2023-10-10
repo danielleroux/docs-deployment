@@ -8,5 +8,15 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@listr2/prompt-adapter-enquirer": "^1.0.1",
+    "enquirer": "^2.4.1",
+    "execa": "^8.0.1",
+    "fs-extra": "^11.1.1",
+    "listr2": "^7.0.1",
+    "rimraf": "^5.0.5",
+    "vite": "^4.4.11",
+    "yauzl-promise": "^4.0.0"
+  }
 }
