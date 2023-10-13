@@ -4,12 +4,24 @@
 import fs from 'fs-extra';
 import { Listr } from 'listr2';
 import path from 'path';
-import { escapeMarkdown } from 'utils';
+import { writeApi } from './api-tasks';
+import { escapeMarkdown } from './utils';
 
 const branch = process.env.IX_DOCS_BRANCH ?? 'main';
+const rootPath = path.join(__dirname, '../');
+
+const componentDocPath = path.join(
+  rootPath,
+  '.temp-examples',
+  'output',
+  `ix-${branch}`,
+  'packages',
+  'core',
+  'component-doc.json'
+);
 
 const examplePath = path.join(
-  __dirname,
+  rootPath,
   '.temp-examples',
   'output',
   `ix-${branch}`,
@@ -44,29 +56,29 @@ const vueTextAppPath = path.join(
   'preview-examples'
 );
 
-const docsPath = path.join(__dirname, 'docs', 'auto-generated');
+const docsPath = path.join(rootPath, 'docs', 'auto-generated');
 const docsExampleWebComponentPath = path.join(
-  __dirname,
+  rootPath,
   'docs',
   'auto-generated',
   'web-component'
 );
 
 const docsExampleReactPath = path.join(
-  __dirname,
+  rootPath,
   'docs',
   'auto-generated',
   'react'
 );
 
 const docsExampleAngularPath = path.join(
-  __dirname,
+  rootPath,
   'docs',
   'auto-generated',
   'angular'
 );
 
-const docsGenerationPath = path.join(__dirname, 'docs', 'auto-generated');
+const docsGenerationPath = path.join(rootPath, 'docs', 'auto-generated');
 
 interface Context {
   names: string[];
@@ -89,7 +101,7 @@ const tasks = new Listr<Context>(
     },
     {
       title: `Collecting html examples`,
-      task: async (ctx, task) => {
+      task: (ctx) => {
         const examples = fs
           .readdirSync(htmlTestAppPath)
           .filter((name) => name.endsWith('.html'));
@@ -102,7 +114,7 @@ const tasks = new Listr<Context>(
     },
     {
       title: `Collecting react examples`,
-      task: async (ctx, task) => {
+      task: (ctx) => {
         const examples = fs
           .readdirSync(reactTextAppPath)
           .filter((name) => name.endsWith('.tsx'));
@@ -112,7 +124,7 @@ const tasks = new Listr<Context>(
     },
     {
       title: `Collecting angular examples`,
-      task: async (ctx, task) => {
+      task: (ctx) => {
         const examples = fs
           .readdirSync(angularTextAppPath)
           .filter((name) => name.endsWith('.ts') || name.endsWith('.html'));
@@ -122,7 +134,7 @@ const tasks = new Listr<Context>(
     },
     {
       title: `Collecting vue examples`,
-      task: async (ctx, task) => {
+      task: (ctx) => {
         const examples = fs
           .readdirSync(vueTextAppPath)
           .filter((name) => name.endsWith('.vue'));
@@ -156,7 +168,7 @@ const tasks = new Listr<Context>(
           );
         });
 
-        await Promise.all(examples);
+        return Promise.all(examples);
       },
     },
     {
@@ -174,7 +186,7 @@ const tasks = new Listr<Context>(
           );
         });
 
-        await Promise.all(examples);
+        return Promise.all(examples);
       },
     },
     {
@@ -206,7 +218,24 @@ const tasks = new Listr<Context>(
           }
         });
 
-        await Promise.all(examples);
+        return Promise.all(examples);
+      },
+    },
+    {
+      title: 'Generate API Docs',
+      task: async () => {
+        const componentDocRaw = (
+          await fs.readFile(componentDocPath)
+        ).toString();
+        const componentDoc = JSON.parse(componentDocRaw) as {
+          components: any[];
+        };
+
+        const { components } = componentDoc;
+
+        return components.map(async (component) =>
+          writeApi(component, docsPath)
+        );
       },
     },
   ],
