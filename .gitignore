@@ -1,3 +1,11 @@
 .DS_Store
 node_modules
 .temp-examples
+.docusaurus
+
+docs/auto-generated/
+scripts/.typedoc/
+static/auto-generated/
+static/figma/
+static/webcomponent-examples/*
+!static/versioned_examples/*/webcomponent-examples
