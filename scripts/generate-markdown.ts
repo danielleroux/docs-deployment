@@ -35,21 +35,21 @@ const htmlTestAppPath = path.join(
   'preview-examples'
 );
 
-const reactTextAppPath = path.join(
+const reactTestAppPath = path.join(
   examplePath,
   'react-test-app',
   'src',
   'preview-examples'
 );
 
-const angularTextAppPath = path.join(
+const angularTestAppPath = path.join(
   examplePath,
   'angular-test-app',
   'src',
   'preview-examples'
 );
 
-const vueTextAppPath = path.join(
+const vueTestAppPath = path.join(
   examplePath,
   'vue-test-app',
   'src',
@@ -57,28 +57,27 @@ const vueTextAppPath = path.join(
 );
 
 const docsPath = path.join(rootPath, 'docs', 'auto-generated');
-const docsExampleWebComponentPath = path.join(
+const docsPreviewPath = path.join(
   rootPath,
   'docs',
   'auto-generated',
-  'web-component'
+  'previews'
 );
 
-const docsExampleReactPath = path.join(
-  rootPath,
-  'docs',
-  'auto-generated',
-  'react'
+const docsExampleWebComponentPath = path.join(docsPreviewPath, 'web-component');
+const docsExampleReactPath = path.join(docsPreviewPath, 'react');
+const docsExampleAngularPath = path.join(docsPreviewPath, 'angular');
+const docsExampleVuePath = path.join(docsPreviewPath, 'vue');
+
+const docsStaticExamples = path.join(rootPath, 'static', 'auto-generated');
+const docsStaticWebComponentExamples = path.join(
+  docsStaticExamples,
+  'web-components'
 );
 
-const docsExampleAngularPath = path.join(
-  rootPath,
-  'docs',
-  'auto-generated',
-  'angular'
-);
-
-const docsGenerationPath = path.join(rootPath, 'docs', 'auto-generated');
+const docsStaticAngularExamples = path.join(docsStaticExamples, 'angular');
+const docsStaticReactExamples = path.join(docsStaticExamples, 'react');
+const docsStaticVueExamples = path.join(docsStaticExamples, 'vue');
 
 interface Context {
   names: string[];
@@ -94,9 +93,17 @@ const tasks = new Listr<Context>(
       title: 'Setup',
       task: async () => {
         await fs.ensureDir(docsPath);
+        await fs.ensureDir(docsPreviewPath);
+
         await fs.ensureDir(docsExampleWebComponentPath);
         await fs.ensureDir(docsExampleReactPath);
         await fs.ensureDir(docsExampleAngularPath);
+        await fs.ensureDir(docsExampleVuePath);
+
+        await fs.ensureDir(docsStaticWebComponentExamples);
+        await fs.ensureDir(docsStaticAngularExamples);
+        await fs.ensureDir(docsStaticReactExamples);
+        await fs.ensureDir(docsStaticVueExamples);
       },
     },
     {
@@ -116,7 +123,7 @@ const tasks = new Listr<Context>(
       title: `Collecting react examples`,
       task: (ctx) => {
         const examples = fs
-          .readdirSync(reactTextAppPath)
+          .readdirSync(reactTestAppPath)
           .filter((name) => name.endsWith('.tsx'));
 
         ctx.reactExamples = examples;
@@ -126,7 +133,7 @@ const tasks = new Listr<Context>(
       title: `Collecting angular examples`,
       task: (ctx) => {
         const examples = fs
-          .readdirSync(angularTextAppPath)
+          .readdirSync(angularTestAppPath)
           .filter((name) => name.endsWith('.ts') || name.endsWith('.html'));
 
         ctx.angularExamples = examples;
@@ -136,7 +143,7 @@ const tasks = new Listr<Context>(
       title: `Collecting vue examples`,
       task: (ctx) => {
         const examples = fs
-          .readdirSync(vueTextAppPath)
+          .readdirSync(vueTestAppPath)
           .filter((name) => name.endsWith('.vue'));
 
         ctx.vueExamples = examples;
@@ -147,7 +154,7 @@ const tasks = new Listr<Context>(
       task: async (ctx, task) => {
         const examples = ctx.htmlExamples;
 
-        examples.map(async (example, index) => {
+        examples.map(async (example) => {
           const rawSource = await getRawStingContent(
             path.join(htmlTestAppPath, example)
           );
@@ -162,8 +169,10 @@ const tasks = new Listr<Context>(
               .trimEnd();
           }
 
+          const fileName = path.parse(example);
+
           return fs.writeFile(
-            path.join(docsExampleWebComponentPath, `${ctx.names[index]}.md`),
+            path.join(docsExampleWebComponentPath, `${fileName.name}.md`),
             wrap(`${formattedSource}`, 'html', 0)
           );
         });
@@ -176,12 +185,12 @@ const tasks = new Listr<Context>(
       task: async (ctx, task) => {
         const examples = ctx.reactExamples;
 
-        examples.map(async (example, index) => {
+        examples.map(async (example) => {
           const rawSource = await getRawStingContent(
-            path.join(reactTextAppPath, example)
+            path.join(reactTestAppPath, example)
           );
           return fs.writeFile(
-            path.join(docsExampleReactPath, `${ctx.names[index]}.md`),
+            path.join(docsExampleReactPath, `${path.parse(example).name}.md`),
             wrap(rawSource, 'tsx')
           );
         });
@@ -194,10 +203,10 @@ const tasks = new Listr<Context>(
       task: async (ctx, task) => {
         const examples = ctx.angularExamples;
 
-        examples.map(async (example, index) => {
+        examples.map(async (example) => {
           if (example.endsWith('.html')) {
             const rawSource = await getRawStingContent(
-              path.join(angularTextAppPath, example)
+              path.join(angularTestAppPath, example)
             );
 
             return fs.writeFile(
@@ -208,7 +217,7 @@ const tasks = new Listr<Context>(
 
           if (example.endsWith('.ts')) {
             const rawSource = await getRawStingContent(
-              path.join(angularTextAppPath, example)
+              path.join(angularTestAppPath, example)
             );
 
             return fs.writeFile(
@@ -216,6 +225,24 @@ const tasks = new Listr<Context>(
               wrap(rawSource, 'ts')
             );
           }
+        });
+
+        return Promise.all(examples);
+      },
+    },
+    {
+      title: `Write vue examples`,
+      task: async (ctx, task) => {
+        const examples = ctx.vueExamples;
+
+        examples.map(async (example) => {
+          const rawSource = await getRawStingContent(
+            path.join(vueTestAppPath, example)
+          );
+          return fs.writeFile(
+            path.join(docsExampleVuePath, `${path.parse(example).name}.md`),
+            wrap(rawSource, 'html')
+          );
         });
 
         return Promise.all(examples);
@@ -233,9 +260,20 @@ const tasks = new Listr<Context>(
 
         const { components } = componentDoc;
 
-        return components.map(async (component) =>
-          writeApi(component, docsPath)
+        return Promise.all(
+          components.map(async (component) => writeApi(component, docsPath))
         );
+      },
+    },
+    {
+      title: 'Copy examples to dist',
+      task: async () => {
+        return Promise.all([
+          fs.copy(htmlTestAppPath, docsStaticWebComponentExamples),
+          fs.copy(angularTestAppPath, docsStaticAngularExamples),
+          fs.copy(reactTestAppPath, docsStaticReactExamples),
+          fs.copy(vueTestAppPath, docsStaticVueExamples),
+        ]);
       },
     },
   ],
