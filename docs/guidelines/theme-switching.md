@@ -11,7 +11,7 @@ import PlaygroundV2 from '@site/src/components/PlaygroundV2';
 <ApiTableSinceTag message="1.3.0" />
 
 <PlaygroundV2
-  name="theme-switcher"
+  name="buttons"
   height="15rem"
   examplesByName  
 >

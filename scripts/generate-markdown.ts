@@ -270,6 +270,10 @@ const tasks = new Listr<Context>(
       task: async () => {
         return Promise.all([
           fs.copy(htmlTestAppPath, docsStaticWebComponentExamples),
+          fs.copy(
+            path.join(examplePath, 'html-test-app', 'dist'),
+            docsStaticExamples
+          ),
           fs.copy(angularTestAppPath, docsStaticAngularExamples),
           fs.copy(reactTestAppPath, docsStaticReactExamples),
           fs.copy(vueTestAppPath, docsStaticVueExamples),

@@ -20,6 +20,7 @@
   "dependencies": {
     "@docusaurus/core": "3.0.0-beta.0",
     "@docusaurus/preset-classic": "3.0.0-beta.0",
+    "@docusaurus/theme-classic": "3.0.0-beta.0",
     "@docusaurus/theme-common": "3.0.0-beta.0",
     "@docusaurus/theme-live-codeblock": "3.0.0-beta.0",
     "@mdx-js/react": "^2.3.0",
@@ -46,6 +47,7 @@
     "@docusaurus/tsconfig": "3.0.0-beta.0",
     "@listr2/prompt-adapter-enquirer": "^1.0.1",
     "@types/fs-extra": "^9.0.13",
+    "@types/node": "^20.8.6",
     "@types/react": "^18.2.28",
     "@types/react-dom": "^18.2.13",
     "@types/yauzl-promise": "^2.1.2",

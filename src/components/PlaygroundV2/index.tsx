@@ -2,35 +2,64 @@
  * COPYRIGHT (c) Siemens AG 2018-2023 ALL RIGHTS RESERVED.
  */
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import { IxSpinner, IxTabItem, IxTabs } from '@siemens/ix-react';
+import { IxIconButton, IxSpinner, IxTabItem, IxTabs } from '@siemens/ix-react';
 import CodeBlock from '@theme/CodeBlock';
 import { useEffect, useState } from 'react';
 import { TargetFramework } from '../Playground/framework-types';
 import Demo, { DemoProps } from './../Demo';
+import styles from './styles.module.css';
 
 type SourceFile = {
   filename: string;
   source: string;
 };
 
-function sliceHtmlCode(code: string) {
-  if (code.includes('<!-- Preview code -->')) {
-    const [__, source] = code.split('<!-- Preview code -->');
-    return source
-      .split('\n')
-      .map((line) => line.replace(/[ ]{4}/, ''))
-      .join('\n')
-      .trimEnd();
+function getBranchPath(framework: TargetFramework) {
+  let path = 'html';
+
+  if (framework === TargetFramework.ANGULAR) {
+    path = 'angular';
   }
 
-  return code.replace(/\/\*\s*\n([^\*]|\*[^\/])*\*\/\n/g, '');
+  if (framework === TargetFramework.REACT) {
+    path = 'react';
+  }
+
+  if (framework === TargetFramework.VUE) {
+    path = 'vue';
+  }
+
+  return `siemens/ix/tree/main/packages/${path}-test-app`;
+}
+
+function stripHeader(code: string) {
+  return code
+    .replace(/\/\*\s*\n([^\*]|\*[^\/])*\*\/(\n)+/g, '')
+    .replace(/<!-.*SPD.*-->(\n)+/gms, '');
+}
+
+function sliceHtmlCode(code: string) {
+  if (code.includes('<!-- Preview code -->')) {
+    const [__, source] = code.split('<!-- Preview code -->\n');
+    return stripHeader(
+      source
+        .split('\n')
+        .map((line) => line.replace(/[ ]{4}/, ''))
+        .join('\n')
+        .trimEnd()
+    );
+  }
+
+  return stripHeader(code);
 }
 
 async function fetchSource(path: string) {
   const response = await fetch(path);
   const source = await response.text();
 
-  // Docusaurus don' throw a classical 404 if a sub route is not found
+  // Docusaurus don' throw a classic 404 if a sub route is not found
+  // Check if the response is the bootstrap code of docusaurus
+  // If this is the case the resource is not existing
   if (!source || source?.includes(`<div id="__docusaurus"></div>`)) {
     return null;
   }
@@ -91,7 +120,7 @@ function getLanguage(filename: string) {
   }
 
   if (filename.endsWith('.vue')) {
-    return 'ts';
+    return 'tsx';
   }
 }
 
@@ -192,6 +221,8 @@ function SourceCodePreview(props: {
 export default function PlaygroundV2(props: PlaygroundV2Props) {
   const [tab, setTab] = useState<TargetFramework>(TargetFramework.PREVIEW);
 
+  const baseUrlAssets = useBaseUrl('/img');
+
   return (
     <div>
       <IxTabs>
@@ -208,6 +239,34 @@ export default function PlaygroundV2(props: PlaygroundV2Props) {
         <IxTabItem onClick={() => setTab(TargetFramework.JAVASCRIPT)}>
           Javascript
         </IxTabItem>
+
+        <div className={styles.Files_Toolbar}>
+          {tab === TargetFramework.PREVIEW ? (
+            <IxIconButton ghost size="16" icon={`open-external`}></IxIconButton>
+          ) : (
+            <>
+              <IxIconButton
+                ghost
+                size="16"
+                icon={`${baseUrlAssets}/stackblitz.svg`}
+                onClick={() => {
+                  window.open(
+                    `https://stackblitz.com/github/${getBranchPath(tab)}`
+                  );
+                }}
+              ></IxIconButton>
+
+              <IxIconButton
+                ghost
+                size="16"
+                icon={`${baseUrlAssets}/github.svg`}
+                onClick={() => {
+                  window.open(`https://github.com/${getBranchPath(tab)}`);
+                }}
+              ></IxIconButton>
+            </>
+          )}
+        </div>
       </IxTabs>
       {tab === TargetFramework.PREVIEW ? <Demo {...props}></Demo> : null}
       {tab !== TargetFramework.PREVIEW ? (
