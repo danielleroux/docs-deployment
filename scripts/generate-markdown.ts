@@ -272,7 +272,7 @@ const tasks = new Listr<Context>(
           fs.copy(htmlTestAppPath, docsStaticWebComponentExamples),
           fs.copy(
             path.join(examplePath, 'html-test-app', 'dist'),
-            docsStaticExamples
+            path.join(docsStaticExamples, 'dist')
           ),
           fs.copy(angularTestAppPath, docsStaticAngularExamples),
           fs.copy(reactTestAppPath, docsStaticReactExamples),

@@ -10,7 +10,7 @@
 import { useDocsPreferredVersion } from '@docusaurus/theme-common';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { getDefaultTheme } from './config';
 
 export interface DemoProps {
@@ -35,8 +35,7 @@ export default function Demo(props: DemoProps) {
     const currentVersion: string = preferredVersion?.name;
     if (currentVersion === undefined || currentVersion === 'current') {
       setBase(
-        baseUrl +
-          `webcomponent-examples/dist/preview-examples/${props.name}.html`
+        baseUrl + `auto-generated/dist/preview-examples/${props.name}.html`
       );
     } else {
       setBase(
