@@ -4,6 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
+    "postinstall": "pnpm download-examples",
     "docusaurus": "docusaurus",
     "start": "npm run generate-markdown && docusaurus start",
     "build": "npm run generate-markdown && docusaurus build",
@@ -76,6 +77,6 @@
     ]
   },
   "engines": {
-    "node": ">=16.14"
+    "node": ">=18.18"
   }
 }
