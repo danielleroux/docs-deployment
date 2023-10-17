@@ -5,8 +5,7 @@ import fs from "fs-extra";
 import { Listr } from "listr2";
 import path from "path";
 import { rimraf } from "rimraf";
-import { Readable } from "stream";
-import { finished, pipeline } from "stream/promises";
+import { pipeline } from "stream/promises";
 import yauzl from "yauzl-promise";
 import axios from "axios";
 
