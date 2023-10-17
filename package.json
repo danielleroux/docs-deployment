@@ -77,10 +77,5 @@
   },
   "engines": {
     "node": ">=16.14"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/gtag.js": "0.0.16"
-    }
   }
 }

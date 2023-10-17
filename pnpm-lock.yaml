@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@types/gtag.js': 0.0.16
-
 dependencies:
   '@docusaurus/core':
     specifier: 3.0.0-beta.0
@@ -1986,7 +1983,7 @@ packages:
       '@docusaurus/core': 3.0.0-beta.0(@docusaurus/types@3.0.0-beta.0)(react-dom@18.2.0)(react@18.2.0)(typescript@4.9.5)
       '@docusaurus/types': 3.0.0-beta.0(react-dom@18.2.0)(react@18.2.0)
       '@docusaurus/utils-validation': 3.0.0-beta.0(@docusaurus/types@3.0.0-beta.0)
-      '@types/gtag.js': 0.0.16
+      '@types/gtag.js': 0.0.12
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       tslib: 2.6.2
@@ -3334,8 +3331,8 @@ packages:
       '@types/node': 20.8.6
     dev: true
 
-  /@types/gtag.js@0.0.16:
-    resolution: {integrity: sha512-TefTCQWiQYc1F7zF7KKLOd5E645me+9CjfPwJLNxWxaTK3ITKmCxtHRVH7EhSo1dl+sVGmu2h2htCOZrjWQRrQ==}
+  /@types/gtag.js@0.0.12:
+    resolution: {integrity: sha512-YQV9bUsemkzG81Ea295/nF/5GijnD2Af7QhEofh7xu+kvCN6RdodgNwwGWXB5GMI3NoyvQo0odNctoH/qLMIpg==}
     dev: false
 
   /@types/hast@2.3.6:
