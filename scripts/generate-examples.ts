@@ -8,6 +8,7 @@ import { rimraf } from "rimraf";
 import { Readable } from "stream";
 import { finished, pipeline } from "stream/promises";
 import yauzl from "yauzl-promise";
+import axios from "axios";
 
 const rootPath = path.join(__dirname, "../");
 
@@ -38,11 +39,17 @@ const zipOutputPath = path.join(rootPath, ".temp-examples", "output");
           await fs.ensureDir(tempWorkingDirPath);
           await fs.ensureDir(zipOutputPath);
 
-          const response = await fetch(
-            "https://github.com/siemens/ix/archive/refs/heads/main.zip"
+          // const response = await fetch(
+          //   "https://github.com/siemens/ix/archive/refs/heads/main.zip"
+          // );
+          // const fileStream = fs.createWriteStream(file, { flags: "wx" });
+          // await finished(Readable.fromWeb(response.body!).pipe(fileStream));
+          const response = await axios.get(
+            "https://github.com/siemens/ix/archive/refs/heads/main.zip",
+            { responseType: "arraybuffer" }
           );
-          const fileStream = fs.createWriteStream(file, { flags: "wx" });
-          await finished(Readable.fromWeb(response.body!).pipe(fileStream));
+          const fileData = Buffer.from(response.data, "binary");
+          await fs.writeFile(file, fileData);
         },
       },
       {

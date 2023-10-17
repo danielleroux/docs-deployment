@@ -101,7 +101,7 @@ devDependencies:
     specifier: ^2.1.2
     version: 2.1.2
   axios:
-    specifier: ^1.5.0
+    specifier: ^1.5.1
     version: 1.5.1
   enquirer:
     specifier: ^2.4.1
