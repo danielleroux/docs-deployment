@@ -4,6 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
+    "postinstall": "IX_DOCS_BRANCH=main ts-node -P ./scripts/tsconfig.json ./scripts/generate-examples.ts",
     "docusaurus": "docusaurus",
     "start": "npm run generate-markdown && docusaurus start",
     "build": "npm run generate-markdown && docusaurus build",

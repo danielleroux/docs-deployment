@@ -9,3 +9,5 @@ static/auto-generated/
 static/figma/
 static/webcomponent-examples/*
 !static/versioned_examples/*/webcomponent-examples
+
+build/

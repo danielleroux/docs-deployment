@@ -220,8 +220,15 @@ function SourceCodePreview(props: {
 
 export default function PlaygroundV2(props: PlaygroundV2Props) {
   const [tab, setTab] = useState<TargetFramework>(TargetFramework.PREVIEW);
-
   const baseUrlAssets = useBaseUrl('/img');
+
+  const isTabVisible = (framework: TargetFramework) => {
+    if (props.examplesByName) {
+      return true;
+    }
+
+    return !!props.files[framework];
+  };
 
   return (
     <div>
@@ -229,16 +236,24 @@ export default function PlaygroundV2(props: PlaygroundV2Props) {
         <IxTabItem onClick={() => setTab(TargetFramework.PREVIEW)}>
           Preview
         </IxTabItem>
-        <IxTabItem onClick={() => setTab(TargetFramework.ANGULAR)}>
-          Angular
-        </IxTabItem>
-        <IxTabItem onClick={() => setTab(TargetFramework.REACT)}>
-          React
-        </IxTabItem>
-        <IxTabItem onClick={() => setTab(TargetFramework.VUE)}>Vue</IxTabItem>
-        <IxTabItem onClick={() => setTab(TargetFramework.JAVASCRIPT)}>
-          Javascript
-        </IxTabItem>
+        {isTabVisible(TargetFramework.ANGULAR) && (
+          <IxTabItem onClick={() => setTab(TargetFramework.ANGULAR)}>
+            Angular
+          </IxTabItem>
+        )}
+        {isTabVisible(TargetFramework.REACT) && (
+          <IxTabItem onClick={() => setTab(TargetFramework.REACT)}>
+            React
+          </IxTabItem>
+        )}
+        {isTabVisible(TargetFramework.VUE) && (
+          <IxTabItem onClick={() => setTab(TargetFramework.VUE)}>Vue</IxTabItem>
+        )}
+        {isTabVisible(TargetFramework.JAVASCRIPT) && (
+          <IxTabItem onClick={() => setTab(TargetFramework.JAVASCRIPT)}>
+            Javascript
+          </IxTabItem>
+        )}
 
         <div className={styles.Files_Toolbar}>
           {tab === TargetFramework.PREVIEW ? (
